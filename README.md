@@ -9,7 +9,6 @@ coding-theory-project/
 ├── src/          # Python code for encoding/decoding
 ├── notebooks/    # Jupyter notebooks for demos and testing
 ├── paper/        # LaTeX files for write-up
-├── tests/        # Optional unit tests
 ├── requirements.txt
 ├── README.md
 └── venv/         # Python virtual environment (not tracked by Git)
@@ -54,6 +53,4 @@ coding-theory-project/
 - `jupyter`
 - LaTeX distribution (e.g., TeX Live, MikTeX) for compiling the report
 
-## 📜 License
 
-MIT License (or update as needed)
