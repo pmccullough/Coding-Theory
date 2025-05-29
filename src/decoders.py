@@ -41,6 +41,31 @@ class Decoder:
         codeword = np.dot(message, self.G) % self.p
         return codeword
     
+    def display_G(self):
+        """Display the generator matrix G."""
+        print("Generator Matrix G:")
+        print(self.G)
+
+    def display_n(self):
+        """Display the codeword length n."""
+        print(f"n (codeword length): {self.n}")
+
+    def display_k(self):
+        """Display the message length k."""
+        print(f"k (message length): {self.k}")
+
+    def display_p(self):
+        """Display the field size p."""
+        print(f"p (field size): {self.p}")
+    def display_code(self):
+        """
+        Print all possible messages and their corresponding codewords for this code.
+        """
+        print("Message  ->  Codeword")
+        for message in self._enumerate_messages():
+            codeword = self._encode_message(message)
+            print(f"{message.tolist()}  ->  {codeword.tolist()}")
+
     def hamming_distance(self, codeword1, codeword2):
         """
         Calculate the Hamming distance between two codewords.
@@ -51,42 +76,42 @@ class Decoder:
         # Count the number of differing positions
         return np.sum(codeword1 != codeword2)
     
-    class NearestNeighborDecoder(Decoder):
-        def __init__(self, G, p=2):
-            super().__init__(G, p)
-            self.codebook = self._generate_codebook()  
+class NearestNeighborDecoder(Decoder):
+    def __init__(self, G, p=2):
+        super().__init__(G, p)
+        self.codebook = self._generate_codebook()  
 
-        def _generate_codebook(self):
-            """Precompute all (message, codeword) pairs."""
-            codebook = []
-            for message in self._enumerate_messages():
-                codeword = self._encode_message(message)
-                codebook.append((message, codeword))
-            return codebook
-            
-        def decode(self, received):
-            """
-            Return the message whose codeword is closest to the received vector.
-            """
-            received = np.array(received)  # Ensure NumPy array
-            
-            # Input validation
-            if len(received) != self.n:
-                raise ValueError(f"Received vector must be length {self.n}")
-            if not np.issubdtype(received.dtype, np.integer) or not np.all((0 <= received) & (received < self.p)):
-                raise ValueError(f"All received values must be integers in [0, {self.p - 1}].")
-            
-            # Find closest codeword by Hamming distance
-            min_distance = self.n + 1
-            closest_message = None
+    def _generate_codebook(self):
+        """Precompute all (message, codeword) pairs."""
+        codebook = []
+        for message in self._enumerate_messages():
+            codeword = self._encode_message(message)
+            codebook.append((message, codeword))
+        return codebook
+        
+    def decode(self, received):
+        """
+        Return the message whose codeword is closest to the received vector.
+        """
+        received = np.array(received)  # Ensure NumPy array
+        
+        # Input validation
+        if len(received) != self.n:
+            raise ValueError(f"Received vector must be length {self.n}")
+        if not np.issubdtype(received.dtype, np.integer) or not np.all((0 <= received) & (received < self.p)):
+            raise ValueError(f"All received values must be integers in [0, {self.p - 1}].")
+        
+        # Find closest codeword by Hamming distance
+        min_distance = self.n + 1
+        closest_message = None
 
-            for message, codeword in self.codebook:
-                dist = self.hamming_distance(received, codeword)
-                if dist < min_distance:
-                    min_distance = dist
-                    closest_message = message
+        for message, codeword in self.codebook:
+            dist = self.hamming_distance(received, codeword)
+            if dist < min_distance:
+                min_distance = dist
+                closest_message = message
 
-            return closest_message
+        return closest_message
 
 # Example usage
 if __name__ == "__main__":
@@ -94,7 +119,7 @@ if __name__ == "__main__":
         [1, 1, 0],
         [0, 1, 1]
     ]
-    decoder = Decoder.NearestNeighborDecoder(G)
+    decoder = NearestNeighborDecoder(G)
     
     received = [1, 0, 1]  # Example received vector
     decoded_message = decoder.decode(received)
