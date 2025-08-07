@@ -1,5 +1,7 @@
 import numpy as np 
-from src.utils import encode, hamming_distance
+import sys, os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+from utils import encode, hamming_distance
 
 class Decoder:
     def __init__(self, G, p=2):
@@ -85,7 +87,7 @@ class Decoder:
         """
         print("Message  ->  Codeword")
         for message in self._enumerate_messages():
-            codeword = self._encode_message(message)
+            codeword = encode(message, self.G,self.p)
             print(f"{message.tolist()}  ->  {codeword.tolist()}")
 
     def _enumerate_messages(self):
@@ -143,3 +145,4 @@ if __name__ == "__main__":
     # Decode using brute-force nearest neighbor
     decoded = decoder.decode(received)
     print(f"Decoded message: {decoded}")
+   

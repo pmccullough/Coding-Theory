@@ -1,6 +1,8 @@
 import numpy as np
 from .base import Decoder
-from src.utils import encode, hamming_weight
+import sys, os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+from utils import encode, hamming_weight
 
 class StandardArrayDecoder(Decoder):
     """
@@ -21,13 +23,30 @@ class StandardArrayDecoder(Decoder):
         if arr.shape != (self.n,):
             raise ValueError(f"Received must be length {self.n}, got {arr.shape}")
         # locate coset by subtracting each leader
-        for leader, row in zip(self.coset_leaders, self.standard_array):
-            diff = (arr - leader) % self.p
-            # if diff matches a codeword in this row, that's the coset
-            for cw in row:
-                if np.array_equal(diff, cw):
-                    return cw  # return decoded codeword
+        for leader in self.coset_leaders:
+            candidate = (arr - leader) % self.p
+            if any(np.array_equal(candidate, cw) for cw in self.codewords):
+                return candidate
         raise ValueError("Unable to decode: no matching coset found.")
+    
+    def describe(self):
+        super().describe()
+        print()
+        self.display_coset_leaders()
+
+    def display_coset_leaders(self):
+        """Print all coset leaders, one per line."""
+        print("Coset leaders:")
+        for i, leader in enumerate(self.coset_leaders):
+            print(f"{i}: {leader.tolist()}")
+    
+    def display_standard_array(self):
+        """Display the standard array."""
+        print("Standard Array:")
+        for i, row in enumerate(self.standard_array):
+            print(f"Leader {i}:")
+            for cw in row:
+                print(f"  {cw.tolist()}")
 
     def _enumerate_codebook(self):
         """Yield all (message, codeword) pairs."""

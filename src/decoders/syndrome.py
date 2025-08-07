@@ -1,6 +1,6 @@
 import numpy as np
 from .base import Decoder
-from src.utils import hamming_weight, hamming_distance
+
 
 class SyndromeDecoder(Decoder):
     def __init__(self, G, p=2):
