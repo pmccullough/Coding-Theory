@@ -81,7 +81,7 @@ class StandardArrayDecoder(Decoder):
         return leaders
 
     def _build_standard_array(self):
-        """Return list of cosets: each is list of codewords shifted by leader."""
+        """Return a list of cosets; each is a list of codewords shifted by its leader."""
         p = self.p
         cosets = []
         for leader in self.coset_leaders:
