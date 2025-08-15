@@ -107,4 +107,85 @@ def poly_mod(poly, mod_poly, p):
             for i in range(len(mod_poly)):
                 poly[-len(mod_poly) + i] = (poly[-len(mod_poly) + i] - lead_coeff * mod_poly[i]) % p
         poly.pop()  # Remove highest degree term
-    return poly
+    return coeff_mod_p(poly, p)
+
+def sieve(n):
+   
+    #Create a boolean list to track prime status of numbers
+    prime = [True] * (n + 1)
+    p = 2
+
+    # Sieve of Eratosthenes algorithm
+    while p * p <= n:
+        if prime[p]:
+            
+            # Mark all multiples of p as non-prime
+            for i in range(p * p, n + 1, p):
+                prime[i] = False
+        p += 1
+
+    # Collect all prime numbers
+    res = []
+    for p in range(2, n + 1):
+        if prime[p]:
+            res.append(p)
+    
+    return res
+
+def isprimepower(n):
+    """
+    Check if a number is a prime power (p^k for some prime p and integer k >= 1).
+    """
+    if n < 2:
+        return False
+    for p in sieve(int(n**0.5) + 1):
+        power = p
+        while power < n:
+            power *= p
+        if power == n:
+            return True
+    return False
+
+def gcd(a, b):
+    """
+    Compute the greatest common divisor of a and b using the Euclidean algorithm.
+    """
+    while b != 0:
+        a, b = b, a % b
+    return a
+
+def cyclotomic_coset(n,q,s):
+    """
+    Compute the s-th cyclotomic coset of n mod q.
+    """
+    if not isprimepower(q):
+        raise ValueError("q must be a prime power.")
+    if gcd(n, q) != 1:
+        raise ValueError("n must be coprime to q.")
+    if s < 0 or s > n - 1:
+        raise ValueError("s must be in the range [0, n-1).")
+    coset = []
+    k = s
+    while k not in coset:
+        coset.append(k)
+        k = (k * q) % n
+    return coset
+
+def cyclotomic_cosets(n, q):
+    """
+    Compute all cyclotomic cosets of n mod q.
+    """
+    if not isprimepower(q):
+        raise ValueError("q must be a prime power.")
+    if gcd(n, q) != 1:
+        raise ValueError("n must be coprime to q.")
+    cosets = []
+    for s in range(n):
+        cosets.append(cyclotomic_coset(n, q, s))
+    return cosets
+
+if __name__ == "__main__":
+    # Example usage
+    cosets = cyclotomic_cosets(9, 2)
+    for i, coset in enumerate(cosets):
+        print(f"Coset {i}: {coset}")
