@@ -74,6 +74,14 @@ def coeff_mod_p(poly, p):
     """Return a copy with all coeffs reduced mod p (lowest degree first)."""
     return [c % p for c in poly]
 
+def superscript(n):
+    sup_map = {
+        '0': '\u2070', '1': '\u00B9', '2': '\u00B2', '3': '\u00B3',
+        '4': '\u2074', '5': '\u2075', '6': '\u2076', '7': '\u2077',
+        '8': '\u2078', '9': '\u2079'
+    }
+    return ''.join(sup_map[d] for d in str(n))
+
 def poly_to_string(poly, var='x'):
     """
     Convert a polynomial (lowest degree first) to a human-readable string.
@@ -82,14 +90,14 @@ def poly_to_string(poly, var='x'):
     """
     terms = []
     for power, coeff in enumerate(poly):
-        if coeff == 0:
+        if str(coeff)== "0":
             continue
         if power == 0:
             term = f"{coeff}"
         elif power == 1:
-            term = f"{coeff}{var}" if coeff != 1 else f"{var}"
+            term = f"{coeff}{var}" if str(coeff) != "1" else f"{var}"
         else:
-            term = f"{coeff}{var}^{power}" if coeff != 1 else f"{var}^{power}"
+            term = f"{coeff}{var}"+superscript(power) if str(coeff) != "1"  else f"{var}"+superscript(power)
         terms.append(term)
     return " + ".join(reversed(terms)) if terms else "0"
 
@@ -145,6 +153,13 @@ def isprimepower(n):
         if power == n:
             return True
     return False
+def is_power_of_n(q,n):
+    e = n
+    while e <= q:
+        if e == q:
+            return True
+        e *= n
+    return False
 
 def gcd(a, b):
     """
@@ -186,6 +201,4 @@ def cyclotomic_cosets(n, q):
 
 if __name__ == "__main__":
     # Example usage
-    cosets = cyclotomic_cosets(9, 2)
-    for i, coset in enumerate(cosets):
-        print(f"Coset {i}: {coset}")
+    print(is_power_of_n(64,2))
