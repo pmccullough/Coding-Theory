@@ -17,8 +17,7 @@ coding-theory-project/
 ## 🧠 Goals
 
 - Understand the structure of linear, cyclic, and BCH codes
-- Implement the PGZ decoding algorithm
-- Produce a written report (LaTeX) alongside working code
+- Implement the Key Equation decoding algorithm
 - Visualize decoding via Jupyter notebooks
 
 ## 🚀 Getting Started
